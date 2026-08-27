@@ -35,9 +35,16 @@ export default function Clients() {
   const handleCreate = async (event) => {
     event.preventDefault();
     setFormError(null);
+
+    const phone = String(form.phone).trim();
+    if (!/^\d{10}$/.test(phone)) {
+      setFormError('Phone number must be exactly 10 digits.');
+      return;
+    }
+
     setSaving(true);
     try {
-      await api.post('/clients', form);
+      await api.post('/clients', { ...form, phone });
       setForm({ name: '', phone: '', email: '' });
       setOpen(false);
       load();
@@ -103,7 +110,18 @@ export default function Clients() {
             {formError && <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>}
             <Stack spacing={2} sx={{ mt: 1 }}>
               <TextField label="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required fullWidth />
-              <TextField label="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required fullWidth />
+              <TextField
+                label="Phone"
+                value={form.phone}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setForm({ ...form, phone: digits });
+                }}
+                required
+                fullWidth
+                inputProps={{ inputMode: 'numeric', maxLength: 10, pattern: '\\d{10}' }}
+                helperText="Exactly 10 digits"
+              />
               <TextField label="Email (optional)" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} fullWidth />
             </Stack>
           </DialogContent>

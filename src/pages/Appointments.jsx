@@ -283,7 +283,7 @@ export default function Appointments() {
       ) : appointments.length === 0 ? (
         <EmptyState
           title="No appointments for this date"
-          hint="Pick another date or book a new appointment."
+          hint="Add a client first to create an appointment. Go to Clients, then come back and book."
         />
       ) : (
         <TableContainer component={Paper} variant="outlined">
