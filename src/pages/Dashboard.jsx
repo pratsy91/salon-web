@@ -76,7 +76,7 @@ export default function Dashboard() {
 
   return (
     <Box>
-      <Typography variant="h5">
+      <Typography variant="h5" sx={{ wordBreak: 'break-word' }}>
         Good to see you, {user.name.split(" ")[0]}
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -86,7 +86,18 @@ export default function Dashboard() {
       {!subscription.isActive && (
         <Alert
           severity="warning"
-          sx={{ mb: 3 }}
+          sx={{
+            mb: 3,
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'stretch', sm: 'center' },
+            '& .MuiAlert-action': {
+              marginRight: 0,
+              paddingLeft: 0,
+              marginTop: { xs: 1, sm: 0 },
+              alignSelf: { xs: 'stretch', sm: 'center' },
+              '& .MuiButton-root': { width: { xs: '100%', sm: 'auto' } },
+            },
+          }}
           action={
             user.role === "SALON_OWNER" ? (
               <Button
@@ -152,6 +163,8 @@ export default function Dashboard() {
                 direction="row"
                 spacing={1}
                 alignItems="center"
+                flexWrap="wrap"
+                useFlexGap
                 sx={{ mb: 1 }}
               >
                 <Chip

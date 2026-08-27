@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import {
-  Alert, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel,
+  Alert, Box, Button, Chip, DialogActions, DialogContent, DialogTitle, FormControlLabel,
   Paper, Stack, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   TextField, Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import api, { errorMessage } from '../api/client';
 import { ApiError, EmptyState, Loading } from '../components/StateViews';
+import ResponsiveDialog from '../components/ResponsiveDialog';
 
 const BLANK = {
   name: '',
@@ -103,9 +104,23 @@ export default function Plans() {
 
   return (
     <Box>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        justifyContent="space-between"
+        spacing={2}
+        sx={{ mb: 2 }}
+      >
         <Typography variant="h5">Plans</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>Create plan</Button>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={openCreate}
+          fullWidth
+          sx={{ width: { sm: 'auto' } }}
+        >
+          Create plan
+        </Button>
       </Stack>
 
       <ApiError error={error} />
@@ -116,7 +131,7 @@ export default function Plans() {
         <EmptyState title="No plans yet" hint="Create the first subscription plan." />
       ) : (
         <TableContainer component={Paper} variant="outlined">
-          <Table size="small">
+          <Table size="small" sx={{ minWidth: 680 }}>
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
@@ -149,7 +164,7 @@ export default function Plans() {
         </TableContainer>
       )}
 
-      <Dialog open={isOpen} onClose={closeDialog} fullWidth maxWidth="xs">
+      <ResponsiveDialog open={isOpen} onClose={closeDialog} fullWidth maxWidth="xs">
         <Box component="form" onSubmit={handleSubmit}>
           <DialogTitle>{isEdit ? 'Edit plan' : 'Create plan'}</DialogTitle>
           <DialogContent>
@@ -180,7 +195,7 @@ export default function Plans() {
             </Button>
           </DialogActions>
         </Box>
-      </Dialog>
+      </ResponsiveDialog>
     </Box>
   );
 }

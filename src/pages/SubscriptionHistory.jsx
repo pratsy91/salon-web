@@ -30,7 +30,7 @@ export default function SubscriptionHistory() {
         <EmptyState title="No subscription activity yet" hint="Assigning a plan to a salon records an entry here." />
       ) : (
         <TableContainer component={Paper} variant="outlined">
-          <Table size="small">
+          <Table size="small" sx={{ minWidth: 720 }}>
             <TableHead>
               <TableRow>
                 <TableCell>Date</TableCell>

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Stack,
+  Alert, Box, Button, DialogActions, DialogContent, DialogTitle, Paper, Stack,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/PersonAdd';
 import api, { errorMessage } from '../api/client';
 import { ApiError, EmptyState, Loading } from '../components/StateViews';
+import ResponsiveDialog from '../components/ResponsiveDialog';
 
 export default function Clients() {
   const [clients, setClients] = useState(null);
@@ -57,16 +58,30 @@ export default function Clients() {
 
   return (
     <Box>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        justifyContent="space-between"
+        spacing={2}
+        sx={{ mb: 2 }}
+      >
         <Typography variant="h5">Clients</Typography>
-        <Stack direction="row" spacing={2}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ width: { xs: '100%', sm: 'auto' } }}>
           <TextField
             size="small"
             label="Search name or phone"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            fullWidth
+            sx={{ minWidth: { sm: 200 } }}
           />
-          <Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpen(true)}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setOpen(true)}
+            fullWidth
+            sx={{ width: { sm: 'auto' } }}
+          >
             Add client
           </Button>
         </Stack>
@@ -80,7 +95,7 @@ export default function Clients() {
         <EmptyState title="No clients yet" hint="Add your first client to start booking appointments." />
       ) : (
         <TableContainer component={Paper} variant="outlined">
-          <Table size="small">
+          <Table size="small" sx={{ minWidth: 480 }}>
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
@@ -103,7 +118,7 @@ export default function Clients() {
         </TableContainer>
       )}
 
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="xs">
+      <ResponsiveDialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="xs">
         <Box component="form" onSubmit={handleCreate}>
           <DialogTitle>Add client</DialogTitle>
           <DialogContent>
@@ -130,7 +145,7 @@ export default function Clients() {
             <Button type="submit" variant="contained" disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>
           </DialogActions>
         </Box>
-      </Dialog>
+      </ResponsiveDialog>
     </Box>
   );
 }

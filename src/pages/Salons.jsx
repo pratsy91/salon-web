@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  Alert, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem,
+  Alert, Box, Button, Chip, DialogActions, DialogContent, DialogTitle, MenuItem,
   Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField,
   Typography,
 } from '@mui/material';
@@ -8,6 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import api, { errorMessage } from '../api/client';
 import { ApiError, EmptyState, Loading } from '../components/StateViews';
+import ResponsiveDialog from '../components/ResponsiveDialog';
 
 const ACTIONS = ['ASSIGN', 'RENEW', 'UPGRADE'];
 
@@ -46,7 +47,7 @@ function AssignPlanDialog({ salon, plans, onClose, onDone }) {
   };
 
   return (
-    <Dialog open={Boolean(salon)} onClose={onClose} fullWidth maxWidth="xs">
+    <ResponsiveDialog open={Boolean(salon)} onClose={onClose} fullWidth maxWidth="xs">
       <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle>Subscription · {salon.name}</DialogTitle>
         <DialogContent>
@@ -71,7 +72,7 @@ function AssignPlanDialog({ salon, plans, onClose, onDone }) {
           </Button>
         </DialogActions>
       </Box>
-    </Dialog>
+    </ResponsiveDialog>
   );
 }
 
@@ -172,7 +173,7 @@ function CreateSalonDialog({ open, onClose, onDone }) {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+    <ResponsiveDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle>{createdLogin ? 'Salon created' : 'Create salon'}</DialogTitle>
         <DialogContent>
@@ -241,7 +242,7 @@ function CreateSalonDialog({ open, onClose, onDone }) {
                 >
                   {locating ? 'Getting location…' : 'Use my location'}
                 </Button>
-                <Stack direction="row" spacing={2}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                   <TextField
                     label="Latitude"
                     value={form.latitude}
@@ -287,7 +288,7 @@ function CreateSalonDialog({ open, onClose, onDone }) {
           )}
         </DialogActions>
       </Box>
-    </Dialog>
+    </ResponsiveDialog>
   );
 }
 
@@ -309,9 +310,21 @@ export default function Salons() {
 
   return (
     <Box>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        justifyContent="space-between"
+        spacing={2}
+        sx={{ mb: 2 }}
+      >
         <Typography variant="h5">Salons</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)}>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setCreateOpen(true)}
+          fullWidth
+          sx={{ width: { sm: 'auto' } }}
+        >
           Create salon
         </Button>
       </Stack>
@@ -324,7 +337,7 @@ export default function Salons() {
         <EmptyState title="No salons yet" hint="Create the first salon to get started." />
       ) : (
         <TableContainer component={Paper} variant="outlined">
-          <Table size="small">
+          <Table size="small" sx={{ minWidth: 720 }}>
             <TableHead>
               <TableRow>
                 <TableCell>Salon</TableCell>

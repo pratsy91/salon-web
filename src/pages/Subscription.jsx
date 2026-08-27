@@ -37,7 +37,7 @@ export default function Subscription() {
         <Grid item xs={12} md={5}>
           <Card variant="outlined">
             <CardContent>
-              <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+              <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap sx={{ mb: 2 }}>
                 <Typography variant="h6">{plan ? plan.name : 'No plan'}</Typography>
                 <Chip size="small" color={isActive ? 'success' : 'error'} label={salon.subscriptionStatus} />
               </Stack>
@@ -77,7 +77,7 @@ export default function Subscription() {
             <EmptyState title="No subscription history yet" />
           ) : (
             <TableContainer component={Paper} variant="outlined">
-              <Table size="small">
+              <Table size="small" sx={{ minWidth: 480 }}>
                 <TableHead>
                   <TableRow>
                     <TableCell>Action</TableCell>

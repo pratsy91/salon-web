@@ -5,7 +5,6 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
@@ -24,6 +23,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import api, { errorMessage } from "../api/client";
 import { ApiError, EmptyState, Loading } from "../components/StateViews";
+import ResponsiveDialog from "../components/ResponsiveDialog";
 
 const STATUS_COLOURS = {
   PENDING: "warning",
@@ -74,7 +74,7 @@ function CreateAppointmentDialog({ open, onClose, onCreated, refs }) {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <ResponsiveDialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle>New appointment</DialogTitle>
         <DialogContent>
@@ -139,7 +139,7 @@ function CreateAppointmentDialog({ open, onClose, onCreated, refs }) {
               required
             />
 
-            <Stack direction="row" spacing={2}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <TextField
                 label="Start time"
                 type="time"
@@ -177,7 +177,7 @@ function CreateAppointmentDialog({ open, onClose, onCreated, refs }) {
           </Button>
         </DialogActions>
       </Box>
-    </Dialog>
+    </ResponsiveDialog>
   );
 }
 
@@ -245,9 +245,10 @@ export default function Appointments() {
   return (
     <Box>
       <Stack
-        direction="row"
-        alignItems="center"
+        direction={{ xs: 'column', sm: 'row' }}
+        alignItems={{ xs: 'stretch', sm: 'center' }}
         justifyContent="space-between"
+        spacing={2}
         sx={{ mb: 2 }}
       >
         <Box>
@@ -256,7 +257,7 @@ export default function Appointments() {
             Working hours 09:00–20:00
           </Typography>
         </Box>
-        <Stack direction="row" spacing={2}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ width: { xs: '100%', sm: 'auto' } }}>
           <TextField
             size="small"
             type="date"
@@ -264,12 +265,16 @@ export default function Appointments() {
             value={date}
             onChange={(e) => setDate(e.target.value)}
             InputLabelProps={{ shrink: true }}
+            fullWidth={true}
+            sx={{ minWidth: { sm: 160 } }}
           />
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setDialogOpen(true)}
             disabled={!canCreate}
+            fullWidth
+            sx={{ width: { sm: 'auto' } }}
           >
             New appointment
           </Button>
@@ -287,7 +292,7 @@ export default function Appointments() {
         />
       ) : (
         <TableContainer component={Paper} variant="outlined">
-          <Table size="small">
+          <Table size="small" sx={{ minWidth: 640 }}>
             <TableHead>
               <TableRow>
                 <TableCell>Time</TableCell>
@@ -314,45 +319,52 @@ export default function Appointments() {
                       label={appointment.status}
                     />
                   </TableCell>
-                  <TableCell align="right">
-                    {appointment.status === "PENDING" && (
-                      <Button
-                        size="small"
-                        disabled={rowBusy(appointment._id)}
-                        onClick={() =>
-                          changeStatus(appointment._id, "CONFIRMED")
-                        }
-                        startIcon={
-                          isUpdating(appointment._id, "CONFIRMED") ? (
-                            <CircularProgress size={14} color="inherit" />
-                          ) : null
-                        }
-                      >
-                        {isUpdating(appointment._id, "CONFIRMED")
-                          ? "Confirming…"
-                          : "Confirm"}
-                      </Button>
-                    )}
-                    {appointment.status !== "CANCELLED" &&
-                      appointment.status !== "COMPLETED" && (
+                  <TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
+                    <Stack
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={0.5}
+                      alignItems="flex-end"
+                      justifyContent="flex-end"
+                    >
+                      {appointment.status === "PENDING" && (
                         <Button
                           size="small"
-                          color="error"
                           disabled={rowBusy(appointment._id)}
                           onClick={() =>
-                            changeStatus(appointment._id, "CANCELLED")
+                            changeStatus(appointment._id, "CONFIRMED")
                           }
                           startIcon={
-                            isUpdating(appointment._id, "CANCELLED") ? (
+                            isUpdating(appointment._id, "CONFIRMED") ? (
                               <CircularProgress size={14} color="inherit" />
                             ) : null
                           }
                         >
-                          {isUpdating(appointment._id, "CANCELLED")
-                            ? "Cancelling…"
-                            : "Cancel"}
+                          {isUpdating(appointment._id, "CONFIRMED")
+                            ? "Confirming…"
+                            : "Confirm"}
                         </Button>
                       )}
+                      {appointment.status !== "CANCELLED" &&
+                        appointment.status !== "COMPLETED" && (
+                          <Button
+                            size="small"
+                            color="error"
+                            disabled={rowBusy(appointment._id)}
+                            onClick={() =>
+                              changeStatus(appointment._id, "CANCELLED")
+                            }
+                            startIcon={
+                              isUpdating(appointment._id, "CANCELLED") ? (
+                                <CircularProgress size={14} color="inherit" />
+                              ) : null
+                            }
+                          >
+                            {isUpdating(appointment._id, "CANCELLED")
+                              ? "Cancelling…"
+                              : "Cancel"}
+                          </Button>
+                        )}
+                    </Stack>
                   </TableCell>
                 </TableRow>
               ))}
