@@ -9,9 +9,16 @@ import Subscription from './pages/Subscription';
 import Plans from './pages/Plans';
 import Salons from './pages/Salons';
 import SubscriptionHistory from './pages/SubscriptionHistory';
+import { useAuth } from './context/AuthContext';
 
 const SALON_USERS = ['SALON_OWNER', 'RECEPTIONIST'];
 const SUPER_ADMIN = ['SUPER_ADMIN'];
+
+function DefaultRedirect() {
+  const { user, loading } = useAuth();
+  if (loading || !user) return <Navigate to="/login" replace />;
+  return <Navigate to={user.role === 'SUPER_ADMIN' ? '/plans' : '/'} replace />;
+}
 
 export default function App() {
   return (
@@ -34,7 +41,7 @@ export default function App() {
         <Route path="subscription-history" element={<ProtectedRoute allow={SUPER_ADMIN}><SubscriptionHistory /></ProtectedRoute>} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<DefaultRedirect />} />
     </Routes>
   );
 }
