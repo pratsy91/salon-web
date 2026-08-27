@@ -81,6 +81,7 @@ function CreateSalonDialog({ open, onClose, onDone }) {
   const [locationHint, setLocationHint] = useState(null);
   const [saving, setSaving] = useState(false);
   const [locating, setLocating] = useState(false);
+  const [createdLogin, setCreatedLogin] = useState(null);
 
   const update = (field) => (event) => setForm((prev) => ({ ...prev, [field]: event.target.value }));
 
@@ -135,7 +136,7 @@ function CreateSalonDialog({ open, onClose, onDone }) {
 
     setSaving(true);
     try {
-      await api.post('/salons', {
+      const { data } = await api.post('/salons', {
         name: form.name,
         email: form.email || undefined,
         phone: form.phone || undefined,
@@ -147,10 +148,14 @@ function CreateSalonDialog({ open, onClose, onDone }) {
         longitude: Number(form.longitude),
         allowedRadius: Number(form.allowedRadius || 200),
       });
+      const ownerEmail = form.ownerEmail;
       setForm(BLANK_SALON);
       setLocationHint(null);
+      setCreatedLogin({
+        ownerEmail,
+        stylist: data.defaultStaffLogin || null,
+      });
       onDone();
-      onClose();
     } catch (err) {
       setError(errorMessage(err, 'Could not create the salon.'));
     } finally {
@@ -162,89 +167,124 @@ function CreateSalonDialog({ open, onClose, onDone }) {
     setForm(BLANK_SALON);
     setError(null);
     setLocationHint(null);
+    setCreatedLogin(null);
     onClose();
   };
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <Box component="form" onSubmit={handleSubmit}>
-        <DialogTitle>Create salon</DialogTitle>
+        <DialogTitle>{createdLogin ? 'Salon created' : 'Create salon'}</DialogTitle>
         <DialogContent>
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-          {locationHint && (
-            <Alert severity={error ? 'warning' : 'info'} sx={{ mb: 2 }}>{locationHint}</Alert>
-          )}
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            <Typography variant="subtitle2" color="text.secondary">Salon details</Typography>
-            <TextField label="Salon name" value={form.name} onChange={update('name')} required fullWidth />
-            <TextField label="Email" type="email" value={form.email} onChange={update('email')} fullWidth />
-            <TextField label="Phone" value={form.phone} onChange={update('phone')} fullWidth />
-            <TextField label="Address" value={form.address} onChange={update('address')} fullWidth />
+          {createdLogin ? (
+            <Stack spacing={2} sx={{ mt: 1 }}>
+              <Alert severity="success">
+                Salon created successfully. Use the credentials below to sign in.
+              </Alert>
 
-            <Typography variant="subtitle2" color="text.secondary">Owner login</Typography>
-            <TextField label="Owner name" value={form.ownerName} onChange={update('ownerName')} required fullWidth />
-            <TextField label="Owner email" type="email" value={form.ownerEmail} onChange={update('ownerEmail')} required fullWidth />
-            <TextField
-              label="Owner password"
-              type="password"
-              value={form.ownerPassword}
-              onChange={update('ownerPassword')}
-              required
-              fullWidth
-              helperText="At least 6 characters"
-            />
+              <Typography variant="subtitle2">Owner login</Typography>
+              <Typography variant="body2"><strong>Email:</strong> {createdLogin.ownerEmail}</Typography>
+              <Typography variant="body2">
+                <strong>Password:</strong> the password you entered when creating this salon
+              </Typography>
 
-            <Typography variant="subtitle2" color="text.secondary">Geo-fence</Typography>
-            <Alert severity="info" variant="outlined">
-              GPS may need a few attempts (10–15 clicks) before latitude and longitude appear.
-              After 10–15 tries, if you still don’t get coordinates, set them manually from Google Maps:
-              open Google Maps → long-press (or right-click) the salon location → copy the two
-              numbers shown (latitude, longitude) → paste them into the fields below.
-            </Alert>
-            <Button
-              variant="outlined"
-              startIcon={<MyLocationIcon />}
-              onClick={useMyLocation}
-              disabled={locating}
-            >
-              {locating ? 'Getting location…' : 'Use my location'}
-            </Button>
-            <Stack direction="row" spacing={2}>
-              <TextField
-                label="Latitude"
-                value={form.latitude}
-                onChange={update('latitude')}
-                required
-                fullWidth
-                placeholder="e.g. 24.885617"
-                helperText="Editable — paste from Google Maps if needed"
-              />
-              <TextField
-                label="Longitude"
-                value={form.longitude}
-                onChange={update('longitude')}
-                required
-                fullWidth
-                placeholder="e.g. 74.618053"
-                helperText="Editable — paste from Google Maps if needed"
-              />
+              {createdLogin.stylist && (
+                <>
+                  <Typography variant="subtitle2" sx={{ pt: 1 }}>Default stylist login</Typography>
+                  <Typography variant="body2"><strong>Name:</strong> {createdLogin.stylist.name}</Typography>
+                  <Typography variant="body2"><strong>Email:</strong> {createdLogin.stylist.email}</Typography>
+                  <Typography variant="body2"><strong>Password:</strong> {createdLogin.stylist.password}</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Use the stylist credentials on the mobile app (Receptionist). Assign a plan to this salon before they can check in.
+                  </Typography>
+                </>
+              )}
             </Stack>
-            <TextField
-              label="Allowed radius (metres)"
-              type="number"
-              value={form.allowedRadius}
-              onChange={update('allowedRadius')}
-              required
-              fullWidth
-              inputProps={{ min: 1 }}
-            />
-          </Stack>
+          ) : (
+            <>
+              {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+              {locationHint && (
+                <Alert severity={error ? 'warning' : 'info'} sx={{ mb: 2 }}>{locationHint}</Alert>
+              )}
+              <Stack spacing={2} sx={{ mt: 1 }}>
+                <Typography variant="subtitle2" color="text.secondary">Salon details</Typography>
+                <TextField label="Salon name" value={form.name} onChange={update('name')} required fullWidth />
+                <TextField label="Email" type="email" value={form.email} onChange={update('email')} fullWidth />
+                <TextField label="Phone" value={form.phone} onChange={update('phone')} fullWidth />
+                <TextField label="Address" value={form.address} onChange={update('address')} fullWidth />
+
+                <Typography variant="subtitle2" color="text.secondary">Owner login</Typography>
+                <TextField label="Owner name" value={form.ownerName} onChange={update('ownerName')} required fullWidth />
+                <TextField label="Owner email" type="email" value={form.ownerEmail} onChange={update('ownerEmail')} required fullWidth />
+                <TextField
+                  label="Owner password"
+                  type="password"
+                  value={form.ownerPassword}
+                  onChange={update('ownerPassword')}
+                  required
+                  fullWidth
+                  helperText="At least 6 characters"
+                />
+
+                <Typography variant="subtitle2" color="text.secondary">Geo-fence</Typography>
+                <Alert severity="info" variant="outlined">
+                  GPS may need a few attempts (10–15 clicks) before latitude and longitude appear.
+                  After 10–15 tries, if you still don’t get coordinates, set them manually from Google Maps:
+                  open Google Maps → long-press (or right-click) the salon location → copy the two
+                  numbers shown (latitude, longitude) → paste them into the fields below.
+                </Alert>
+                <Button
+                  variant="outlined"
+                  startIcon={<MyLocationIcon />}
+                  onClick={useMyLocation}
+                  disabled={locating}
+                >
+                  {locating ? 'Getting location…' : 'Use my location'}
+                </Button>
+                <Stack direction="row" spacing={2}>
+                  <TextField
+                    label="Latitude"
+                    value={form.latitude}
+                    onChange={update('latitude')}
+                    required
+                    fullWidth
+                    placeholder="e.g. 24.885617"
+                    helperText="Editable — paste from Google Maps if needed"
+                  />
+                  <TextField
+                    label="Longitude"
+                    value={form.longitude}
+                    onChange={update('longitude')}
+                    required
+                    fullWidth
+                    placeholder="e.g. 74.618053"
+                    helperText="Editable — paste from Google Maps if needed"
+                  />
+                </Stack>
+                <TextField
+                  label="Allowed radius (metres)"
+                  type="number"
+                  value={form.allowedRadius}
+                  onChange={update('allowedRadius')}
+                  required
+                  fullWidth
+                  inputProps={{ min: 1 }}
+                />
+              </Stack>
+            </>
+          )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit" variant="contained" disabled={saving}>
-            {saving ? 'Creating…' : 'Create salon'}
-          </Button>
+          {createdLogin ? (
+            <Button variant="contained" onClick={handleClose}>Done</Button>
+          ) : (
+            <>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button type="submit" variant="contained" disabled={saving}>
+                {saving ? 'Creating…' : 'Create salon'}
+              </Button>
+            </>
+          )}
         </DialogActions>
       </Box>
     </Dialog>

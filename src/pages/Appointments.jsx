@@ -94,7 +94,7 @@ function CreateAppointmentDialog({ open, onClose, onCreated, refs }) {
             >
               {refs.clients.map((client) => (
                 <MenuItem key={client._id} value={client._id}>
-                  {client.name} · {client.phone}
+                  {client.name}
                 </MenuItem>
               ))}
             </TextField>
