@@ -116,8 +116,7 @@ export default function Plans() {
           variant="contained"
           startIcon={<AddIcon />}
           onClick={openCreate}
-          fullWidth
-          sx={{ width: { sm: 'auto' } }}
+          sx={{ width: { xs: '100%', sm: 'auto' } }}
         >
           Create plan
         </Button>

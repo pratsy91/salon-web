@@ -72,15 +72,13 @@ export default function Clients() {
             label="Search name or phone"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            fullWidth
-            sx={{ minWidth: { sm: 200 } }}
+            sx={{ width: { xs: '100%', sm: 'auto' }, minWidth: { sm: 200 } }}
           />
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setOpen(true)}
-            fullWidth
-            sx={{ width: { sm: 'auto' } }}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
           >
             Add client
           </Button>

@@ -265,16 +265,14 @@ export default function Appointments() {
             value={date}
             onChange={(e) => setDate(e.target.value)}
             InputLabelProps={{ shrink: true }}
-            fullWidth={true}
-            sx={{ minWidth: { sm: 160 } }}
+            sx={{ width: { xs: '100%', sm: 'auto' }, minWidth: { sm: 160 } }}
           />
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setDialogOpen(true)}
             disabled={!canCreate}
-            fullWidth
-            sx={{ width: { sm: 'auto' } }}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
           >
             New appointment
           </Button>

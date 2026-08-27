@@ -27,19 +27,6 @@ const theme = createTheme({
         root: { overflowX: 'auto', maxWidth: '100%', WebkitOverflowScrolling: 'touch' },
       },
     },
-    MuiDialogActions: {
-      styleOverrides: {
-        root: {
-          flexWrap: 'wrap',
-          gap: 8,
-          '@media (max-width:599.95px)': {
-            flexDirection: 'column-reverse',
-            '& > :not(style) ~ :not(style)': { marginLeft: 0 },
-            '& .MuiButton-root': { width: '100%' },
-          },
-        },
-      },
-    },
   },
 });
 

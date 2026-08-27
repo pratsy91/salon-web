@@ -322,8 +322,7 @@ export default function Salons() {
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => setCreateOpen(true)}
-          fullWidth
-          sx={{ width: { sm: 'auto' } }}
+          sx={{ width: { xs: '100%', sm: 'auto' } }}
         >
           Create salon
         </Button>
