@@ -291,7 +291,7 @@ export default function Salons() {
                 <TableCell>Plan</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Valid till</TableCell>
-                <TableCell>Geo-fence</TableCell>
+                <TableCell>Allowed radius</TableCell>
                 <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -313,11 +313,7 @@ export default function Salons() {
                   <TableCell>
                     {salon.subscriptionEndDate ? new Date(salon.subscriptionEndDate).toLocaleDateString() : '—'}
                   </TableCell>
-                  <TableCell>
-                    <Typography variant="caption" color="text.secondary">
-                      {salon.latitude.toFixed(4)}, {salon.longitude.toFixed(4)} · {salon.allowedRadius}m
-                    </Typography>
-                  </TableCell>
+                  <TableCell>{salon.allowedRadius}m</TableCell>
                   <TableCell align="right">
                     <Button size="small" onClick={() => setSelected(salon)}>Manage plan</Button>
                   </TableCell>
